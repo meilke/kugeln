@@ -25,7 +25,10 @@ function updateAt(kugeln, position) {
 }
 
 function takeFromLeft(kugeln, position, count) {
-  var leftPosition = Math.max(position - 1, kugeln.length - 1);
+  var leftPosition = position - 1;
+  if (leftPosition <= 0) {
+    leftPosition = kugeln.length - 1;
+  }
   switchFromTo(kugeln, count, position, leftPosition);
 }
 
@@ -54,7 +57,8 @@ function addAt(kugeln, position, count) {
 function log(kugeln) {
   kugeln.forEach((schale) => {
     console.log(schale.name, schale.count, schale.visited);
-  })
+  });
+  console.log('sum', _.reduce(kugeln, (sum, n) => sum + n.count, 0));
   console.log('----------');
 }
 
@@ -88,7 +92,6 @@ function goDeep(currentKugeln, currentIndex) {
   if (overallSum === 0) {
     currentKugeln[path]
     log(currentKugeln);
-    console.log(path.join(','));
     console.log('great success!');
     process.exit();
   }
