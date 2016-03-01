@@ -1,0 +1,6 @@
+{
+  "name": "kugeln",
+  "dependencies": {
+    "lodash": "^4.5.1"
+  }
+}
