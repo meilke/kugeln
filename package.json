@@ -1,6 +1,7 @@
 {
   "name": "kugeln",
   "dependencies": {
+    "keypress": "^0.2.1",
     "lodash": "^4.5.1"
   }
 }

@@ -1,4 +1,5 @@
 const limit = 10;
+const keypress = require('keypress');
 const _ = require('lodash');
 const kugeln = [
   { name: 'A', count: 9, visited: 0 },
@@ -41,12 +42,10 @@ function takeFromRight(kugeln, position, count) {
 }
 
 function switchFromTo(kugeln, count, position, nextPosition) {
-  if (kugeln[nextPosition].count >= count) {
-    addAt(kugeln, nextPosition, -count);
-  } else {
-    addAt(kugeln, nextPosition, -kugeln[nextPosition].count);
-    addAt(kugeln, nextPosition, limit - count);
+  if (kugeln[nextPosition].count < count) {
+    addAt(kugeln, nextPosition, limit);
   }
+  addAt(kugeln, nextPosition, -count);
   addAt(kugeln, position, count);
 }
 
@@ -55,11 +54,14 @@ function addAt(kugeln, position, count) {
 }
 
 function log(kugeln) {
-  kugeln.forEach((schale) => {
-    console.log(schale.name, schale.count, schale.visited);
-  });
+  console.log(kugeln.map((schale) => schale.name).join('\t'));
+  console.log(kugeln.map((schale) => schale.count).join('\t'));
+  console.log(kugeln.map((schale) => schale.visited).join('\t'));
+  console.log('--------------------------------------------------------------------------------');
   console.log('sum', _.reduce(kugeln, (sum, n) => sum + n.count, 0));
-  console.log('----------');
+  console.log('--------------------------------------------------------------------------------');
+  console.log();
+  console.log();
 }
 
 function goodCoordinates(kugeln) {
@@ -106,5 +108,36 @@ function goDeep(currentKugeln, currentIndex) {
   }
 }
 
-var start = parseInt(process.argv[2], 10);
-goDeep(kugeln, start);
+/*var start = parseInt(process.argv[2], 10);
+goDeep(kugeln, start);*/
+
+keypress(process.stdin);
+
+var keyPath = [];
+var newKugeln = _.cloneDeep(kugeln);
+log(newKugeln);
+process.stdin.on('keypress', (ch, key) => {
+  if (key) {
+    if (key.ctrl && key.name === 'c') {
+      process.stdin.pause();
+    } else {
+      var schale = _.find(newKugeln, (k) => k.name.toLowerCase() === key.name);
+      if (schale) {
+        updateAt(newKugeln, _.indexOf(newKugeln, schale));
+        keyPath.push(schale.name);
+        console.log(keyPath.join(','));
+        console.log();
+        log(newKugeln);
+      } else {
+        if (key.name === 'r') {
+          newKugeln = _.cloneDeep(kugeln);
+          keyPath = [];
+          log(newKugeln);
+        }
+      }
+    }
+  }
+});
+ 
+process.stdin.setRawMode(true);
+process.stdin.resume();
